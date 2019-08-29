@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "578874695013",
+    "firebase_url": "https://map-realtime-44186.firebaseio.com",
+    "project_id": "map-realtime-44186",
+    "storage_bucket": "map-realtime-44186.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578874695013:android:628835d869d95b7d",
+        "android_client_info": {
+          "package_name": "com.example.map_realtime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578874695013-3g2levqh3h1jtfjvj8jjfav900fnlf95.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuqneqJJOnQlkajj7VbArcp5qso12fHlY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

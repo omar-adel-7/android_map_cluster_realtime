@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MapRealTime</string>
+    <string name="firebase_token_not_ready">your token is not ready yet , please wait</string>
+    <string name="firebase_token_ready">your token is ready now</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="my_location">my location</string>
+    <string name="getting_your_loc_send_title">Getting Your Location</string>
+    <string name="getting_your_loc_send_text">getting your location and sending it to the server</string>
+    <string name="you">you</string>
+    <string name="at">at</string>
+
+</resources>
+
