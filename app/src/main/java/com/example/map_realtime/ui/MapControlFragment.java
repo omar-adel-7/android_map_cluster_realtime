@@ -40,34 +40,33 @@ import static com.example.map_realtime.Utils.Constants.LocationInBackgroundPerio
 public class MapControlFragment extends BaseMapControlFragment<MapControlFragmentPresenter> implements
 
         IMapControlFragmentContract.IMapControlFragmentContractView
-  ,  ClusterManager.OnClusterClickListener<User>
+        , ClusterManager.OnClusterClickListener<User>
 
 //       , ClusterManager.OnClusterInfoWindowClickListener<User>
 
-        ,ClusterManager.OnClusterItemClickListener<User>, ClusterManager.OnClusterItemInfoWindowClickListener<User>
-   {
+        , ClusterManager.OnClusterItemClickListener<User>, ClusterManager.OnClusterItemInfoWindowClickListener<User> {
 
     PeriodicWorkRequest getMyLocationWorkRequest;
 
-    public LatLng myLocation ;
-       public User myUser ;
+    public LatLng myLocation;
+    public User myUser;
 
     public ClusterManager<User> mClusterManager;
-      @Override
+
+    @Override
     public int getLayoutResource() {
         return R.layout.frg_map_control;
     }
 
     @Override
-    public int getMapId()
-    {
-        return R.id.map ;
+    public int getMapId() {
+        return R.id.map;
     }
 
     @Override
     public void configureUI() {
 
-      getLocationInBackground();
+        getLocationInBackground();
     }
 
 
@@ -106,7 +105,6 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
         mGoogleMap.setOnCameraIdleListener(mClusterManager);
 
 
-
         //method 1
         mGoogleMap.setOnMarkerClickListener(mClusterManager);
         //method 2 this disables onClusterItemClick and  onClusterClick and onClusterItemInfoWindowClick
@@ -123,18 +121,17 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
         mGoogleMap.setInfoWindowAdapter(mClusterManager.getMarkerManager());
 
 
-
-          mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
             @Override
             public void onMapClick(LatLng latLng) {
 
-                CustomAddress customAddress = GetLocationHelper.getAddress(getContainerActivity(),latLng);
+                CustomAddress customAddress = GetLocationHelper.getAddress(getContainerActivity(), latLng);
                 Toast.makeText(getContainerActivity(), customAddress.getCityName(), Toast.LENGTH_LONG).show();
             }
         });
 
-       // mGoogleMap.setOnInfoWindowClickListener(mClusterManager);
+        // mGoogleMap.setOnInfoWindowClickListener(mClusterManager);
 
 
         doWork();
@@ -149,7 +146,7 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);//setOnInfoWindowClickListener
 //        mClusterManager.setOnClusterInfoWindowClickListener(this);
 
-        mClusterManager.setRenderer(new MyClusterItemRenderer(getContainerActivity(),mGoogleMap,mClusterManager));
+        mClusterManager.setRenderer(new MyClusterItemRenderer(getContainerActivity(), mGoogleMap, mClusterManager));
 
         mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
                 new CustomInfoWindowAdapter(getLayoutInflater()));
@@ -159,36 +156,31 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
 
     @Override
     public void gotLocationChangedBase(Location newLocation) {
-         if(isAdded())
-         {
-             LatLng latLng = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
-             myLocation = latLng;
-             if(myUser!=null)
-             {
-                 mClusterManager.removeItem(myUser);
-              }
-           }
+        if (isAdded()) {
+            LatLng latLng = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
+            myLocation = latLng;
+            if (myUser != null) {
+                mClusterManager.removeItem(myUser);
+            }
+        }
     }
+
     @Override
     public void gotLocationChanged(Location newLocation) {
-        if(isAdded())
-        {
+        if (isAdded()) {
             //Log.e("gotLocationChanged Longitude:", "" + String.valueOf(newLocation.getLongitude()));
-          //  Log.e("gotLocationChanged Latitude:", String.valueOf(newLocation.getLatitude()));
+            //  Log.e("gotLocationChanged Latitude:", String.valueOf(newLocation.getLatitude()));
 
             User userObject = new User(Prefs.getString(FIREBASE_TOKEN_KEY), newLocation.getLatitude(), newLocation.getLongitude(),
                     new Date().getTime());
-            myUser=userObject;
-             mClusterManager.addItem(myUser);
+            myUser = userObject;
+            mClusterManager.addItem(myUser);
             mClusterManager.cluster();
             getMapControlFragmentPresenter().attachChildListener();
             getMapControlFragmentPresenter().getDatabaseReferenceMyLocation().setValue(myUser);
         }
 
-      }
-
-
-
+    }
 
 
     private void getLocationInBackground() {
@@ -199,27 +191,26 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
     }
 
 
+    @Override
+    public boolean onClusterItemClick(User item) {
+        // Does nothing, but you could go into the user's profile page, for example.
+        Log.e("onClusterItemClick ", "onClusterItemClick");
 
-       @Override
-       public boolean onClusterItemClick(User item) {
-           // Does nothing, but you could go into the user's profile page, for example.
-           Log.e("onClusterItemClick ","onClusterItemClick");
+        CustomAddress customAddress = GetLocationHelper.getAddress(getContainerActivity(), item.getPosition());
+        if (item.getDate() != null) {
+            String dateText = GeneralUtil.convertDateFromLongToStr(item.getDate());
+            Toast.makeText(getContainerActivity(), " " + getString(R.string.marker_clicked) + " "
+                    + customAddress.getCityName() + " "
+                    + GeneralUtil.getLastChars(
+                    (item.getToken())) + " " + dateText, Toast.LENGTH_LONG).show();
+        }
 
-           CustomAddress customAddress = GetLocationHelper.getAddress(getContainerActivity(),item.getPosition());
-           if(item.getDate()!=null)
-           {
-               String dateText = GeneralUtil.convertDateFromLongToStr(item.getDate());
-               Toast.makeText(getContainerActivity()," "+getString(R.string.marker_clicked)+" "
-                       +customAddress.getCityName()+" "
-                       +GeneralUtil.getLastChars(
-                       (item.getToken())) + " " + dateText,Toast.LENGTH_LONG).show();
-           }
+        return false;
+    }
 
-           return false;
-       }
     @Override
     public boolean onClusterClick(Cluster<User> cluster) {
-        Log.e("onClusterClick ","onClusterClick");
+        Log.e("onClusterClick ", "onClusterClick");
         // Show a toast with some info when the cluster is clicked.
         String firstName = cluster.getItems().iterator().next().getTitle();
         Toast.makeText(getContainerActivity(), cluster.getSize() + " (including " + firstName + ")", Toast.LENGTH_SHORT).show();
@@ -246,17 +237,17 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
         return true;
     }
 
-       @Override
-       public void onClusterItemInfoWindowClick(User item) {
-           // Does nothing, but you could go into the user's profile page, for example.
-           Log.e("onClusterItemInfoWindowClick ","onClusterItemInfoWindowClick");
-           CustomAddress customAddress = GetLocationHelper.getAddress(getContainerActivity(),item.getPosition());
-           String dateText = GeneralUtil.convertDateFromLongToStr(item.getDate());
-           Toast.makeText(getContainerActivity()," "+getString(R.string.info_window_clicked)+" "
-                   +customAddress.getCityName()+" "
-                   +GeneralUtil.getLastChars(
-                   (item.getToken())) + " " + dateText,Toast.LENGTH_LONG).show();
-       }
+    @Override
+    public void onClusterItemInfoWindowClick(User item) {
+        // Does nothing, but you could go into the user's profile page, for example.
+        Log.e("onClusterItemInfoWindowClick ", "onClusterItemInfoWindowClick");
+        CustomAddress customAddress = GetLocationHelper.getAddress(getContainerActivity(), item.getPosition());
+        String dateText = GeneralUtil.convertDateFromLongToStr(item.getDate());
+        Toast.makeText(getContainerActivity(), " " + getString(R.string.info_window_clicked) + " "
+                + customAddress.getCityName() + " "
+                + GeneralUtil.getLastChars(
+                (item.getToken())) + " " + dateText, Toast.LENGTH_LONG).show();
+    }
 
 //    @Override
 //    public void onClusterInfoWindowClick(Cluster<User> cluster) {
@@ -266,16 +257,14 @@ public class MapControlFragment extends BaseMapControlFragment<MapControlFragmen
 //    }
 
 
-
-
-       public void maxRadiusChanged() {
-           for (int i = 0; i < getMapControlFragmentPresenter().getUserArray().size(); i++) {
-               mClusterManager.removeItem(getMapControlFragmentPresenter().getUserArray().get(i));
-           }
-           mClusterManager.cluster();
-           getMapControlFragmentPresenter().getUserArray().clear();
-           getMapControlFragmentPresenter().removeChildListener();
-           getMapControlFragmentPresenter().attachChildListener();
-       }
+    public void maxRadiusChanged() {
+        for (int i = getMapControlFragmentPresenter().getUserArray().size() - 1; i >= 0; i--) {
+            mClusterManager.removeItem(getMapControlFragmentPresenter().getUserArray().get(i));
+        }
+        mClusterManager.cluster();
+        getMapControlFragmentPresenter().getUserArray().clear();
+        getMapControlFragmentPresenter().removeChildListener();
+        getMapControlFragmentPresenter().attachChildListener();
+    }
 
 }
