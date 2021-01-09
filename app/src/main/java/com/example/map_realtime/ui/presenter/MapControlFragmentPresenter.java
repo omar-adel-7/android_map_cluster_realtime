@@ -154,7 +154,7 @@ public class MapControlFragmentPresenter
             User user = singleSnapshot.getValue(User.class);
             if (((MapControlFragment) mView).myLocation != null) {
                 if (!GeneralUtil.isMyUser( user)) {
-                    for (int i = 0; i < getUserArray().size(); i++) {
+                    for (int i = getUserArray().size()-1; i >=0 ; i-- ) {
                         if ((getUserArray().get(i).getToken()
                                 .equals(user.getToken()))) {
 
@@ -189,7 +189,7 @@ public class MapControlFragmentPresenter
             User user = singleSnapshot.getValue(User.class);
             if (((MapControlFragment) mView).myLocation != null) {
                 if (!GeneralUtil.isMyUser( user)) {
-                    for (int i = 0; i < getUserArray().size(); i++) {
+                    for (int i = getUserArray().size()-1; i >=0 ; i-- ) {
                         if ((( getUserArray().get(i)).getToken().equals(user.getToken()))) {
                             ((MapControlFragment) mView).mClusterManager.removeItem(getUserArray().get(i));
                              getUserArray().remove(i);
